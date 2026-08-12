@@ -271,7 +271,7 @@ export default function ComparePage() {
         
         {/* Results Header */}
         {hasSearched && !loading && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-3 bg-white shrink-0 gap-4 sticky top-[53px] z-20 border-b border-zinc-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-3 bg-white shrink-0 gap-4 sticky z-20 border-b border-zinc-200">
             <div className="flex items-center gap-4 flex-wrap">
               <span className="text-sm text-zinc-500">
                 <span className="text-zinc-900 font-medium">{filteredAndSortedProducts.length} de {products.length}</span> produtos
