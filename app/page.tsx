@@ -53,7 +53,7 @@ export default function ComparePage() {
             pingodoce: data.status === "ok" && stores.includes("pingodoce"),
           });
         }
-      } catch (e) {
+      } catch {
         setHealth({ continente: false, pingodoce: false });
       }
     };
@@ -76,7 +76,7 @@ export default function ComparePage() {
           fetch(`/api/pingodoce/suggestions?q=${encodeURIComponent(debouncedInput)}`).then(r => r.json())
         ]);
         
-        let newSuggestions: { text: string, store: string }[] = [];
+        const newSuggestions: { text: string, store: string }[] = [];
         
         if (resCont.status === "fulfilled" && resCont.value.suggestions) {
           newSuggestions.push(...resCont.value.suggestions.map((s: string) => ({ text: s, store: "Continente" })));
@@ -87,7 +87,7 @@ export default function ComparePage() {
         
         const unique = Array.from(new Map(newSuggestions.map(item => [item.text.toLowerCase(), item])).values());
         setSuggestions(unique.slice(0, 8));
-      } catch (e) {
+      } catch {
         // ignore
       }
     };
@@ -130,7 +130,7 @@ export default function ComparePage() {
         setProducts(allProducts);
       }
       
-    } catch (err) {
+    } catch {
       setError("Ocorreu um erro ao pesquisar os produtos.");
     } finally {
       setLoading(false);
@@ -144,7 +144,7 @@ export default function ComparePage() {
   };
 
   const filteredAndSortedProducts = useMemo(() => {
-    let result = products.filter(p => {
+    const result = products.filter(p => {
       if (!showContinente && p.brand === "Continente") return false;
       if (!showPingoDoce && p.brand === "Pingo Doce") return false;
       if (filterPromo && !(p.desconto || p.pvp_recomendado || p.promocao)) return false;

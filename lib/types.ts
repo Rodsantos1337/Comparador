@@ -1,7 +1,8 @@
+export type StoreBrand = "Continente" | "Pingo Doce";
+
 export interface Product {
-  ean: string;
   id: string;
-  brand: "Continente" | "Pingo Doce";
+  brand: StoreBrand;
   nome: string;
   price: number;
   desconto: string | null;

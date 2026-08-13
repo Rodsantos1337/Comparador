@@ -1,17 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { SuggestionsResponse } from "@/lib/types";
+import { parseSuggestionsQuery } from "@/lib/api/parse";
+import { getPingoDoceSuggestions } from "@/lib/scraper/pingodoce";
+import type { SuggestionsResponse } from "@/lib/types";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const q = searchParams.get("q");
+  const query = parseSuggestionsQuery(searchParams.get("q"));
 
-  if (!q) {
-    return NextResponse.json({ error: "Missing query parameter 'q'" }, { status: 400 });
+  // Suggestions are best-effort: anything unusable or failing yields an empty list.
+  if (!query) {
+    return NextResponse.json({ suggestions: [] });
   }
 
-  const response: SuggestionsResponse = {
-    suggestions: ["arroz", "arroz vaporizado", "arroz para sushi"].filter(s => s.includes(q.toLowerCase()))
-  };
-
-  return NextResponse.json(response);
+  try {
+    const suggestions = await getPingoDoceSuggestions(query);
+    const response: SuggestionsResponse = { suggestions };
+    return NextResponse.json(response);
+  } catch (error) {
+    console.error("[pingodoce/suggestions]", error);
+    return NextResponse.json({ suggestions: [] });
+  }
 }
