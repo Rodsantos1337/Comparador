@@ -22,8 +22,7 @@ Um único projeto **Next.js** que serve o frontend e a própria API — sem serv
 | Linting | ESLint 9 + `eslint-config-next` | `eslint.config.mjs` |
 | Toolchain | Bun (instalação, dev, build) | `package.json` (`packageManager`) |
 | CI/CD | GitHub Actions | `.github/workflows/ci.yml` |
-| Runtime | Node.js 22 (imagem Docker `standalone`) | `Dockerfile` |
-| Hosting | Vercel Functions (região `fra1` via `vercel.json`) | `vercel.json` |
+| Runtime & Hosting | Node.js (Vercel Functions, região `fra1`) | `app/api/`, `vercel.json` |
 
 ### Como funciona
 
@@ -130,19 +129,6 @@ curl "https://comparador-fawn.vercel.app/api/pingodoce/search?q=azeite"
 ```
 
 **Caveat conhecido**: os sites das lojas usam CDN/bot-protection; IPs de datacenter podem ser bloqueados (`403`) mesmo que funcionem a partir de casa. É o primeiro sinal a verificar no passo 6.
-
-## Deploy alternativo — Northflank (tier grátis)
-
-A imagem é um Next.js `standalone` num `Dockerfile` multi-stage (bun a instalar/buildar, Node 22 a correr). O tier Sandbox gratuito da Northflank oferece *always-on* compute (sem sleep) e 2 serviços.
-
-1. Repositório no GitHub (pode ficar privado).
-2. [northflank.com](https://northflank.com) → criar projeto.
-3. Ligar o GitHub e **autorizar o app Northflank** com acesso ao repositório `Comparador`.
-4. Criar serviço a partir do repo — o `Dockerfile` é detetado automaticamente.
-5. Configurar no serviço: porta interna `3000`, health check em `/api/health`.
-6. Deploy. O URL atribuído não exige alterações ao código (tudo é `same-origin`).
-
-Aplica-se o mesmo caveat de bloqueio por IP de datacenter referido na secção Vercel.
 
 ## CI
 
