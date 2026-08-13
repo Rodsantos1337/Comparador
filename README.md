@@ -2,7 +2,32 @@
 
 Comparador de preços entre o **Continente** e o **Pingo Doce**. Pesquisa em tempo real nos sites das duas cadeias, extrai produtos, preços e promoções e apresenta-os lado a lado.
 
-A stack é um único projeto **Next.js 15** (App Router + TypeScript + Tailwind CSS): o frontend consome a própria API `same-origin`, que corre o motor de scraping em Route Handlers Node.js — sem servidores separados, sem chaves de API.
+🔗 Demo ao vivo: **https://comparador-fawn.vercel.app/**
+
+![Comparador — demonstração](assets/comparador-screenshot.png)
+
+## Stack
+
+Um único projeto **Next.js** que serve o frontend e a própria API — sem servidores separados, sem chaves de API, sem serviços de scraping externos.
+
+| Camada | Tecnologia | Onde no repo |
+| --- | --- | --- |
+| Framework | Next.js 15 (App Router) + React 19 | `app/`, `next.config.ts` |
+| Linguagem | TypeScript 5.9 | todo o código `.ts`/`.tsx` |
+| Estilos | Tailwind CSS 4 (PostCSS) + `@tailwindcss/typography` | `app/globals.css`, `tailwind()`-free/native config |
+| Componentes | Radix UI (checkbox, popover, slot) + class-variance-authority + tailwind-merge + tw-animate-css | `components/` |
+| Ícones | lucide-react | `components/` |
+| Scraping | cheerio, corre no servidor (Node Route Handlers) | `lib/scraper/`, `app/api/` |
+| Testes | Vitest (parsers puros + fixtures de HTML real) | `tests/` |
+| Linting | ESLint 9 + `eslint-config-next` | `eslint.config.mjs` |
+| Toolchain | Bun (instalação, dev, build) | `package.json` (`packageManager`) |
+| CI/CD | GitHub Actions | `.github/workflows/ci.yml` |
+| Runtime | Node.js 22 (imagem Docker `standalone`) | `Dockerfile` |
+| Hosting | Vercel Functions (região `fra1` via `vercel.json`) | `vercel.json` |
+
+### Como funciona
+
+O frontend consome a própria API `same-origin`. Cada loja tem Route Handlers Node.js (`app/api/{continente,pingodoce}/{search,suggestions}/route.ts`) que fazem scraping do site com `fetch` + headers de browser, parsers **puros** (`lib/scraper/`) convertem o HTML em `Product[]`, e os resultados voltam como JSON tipado (`lib/types.ts`). Os parsers recebem HTML e devolvem objetos — sem I/O — pelo que são unit-testados contra fixtures capturadas dos sites reais.
 
 ## Arquitetura
 
@@ -91,17 +116,17 @@ O `vercel.json` na raiz fixa as funções na região `fra1` (Frankfurt), a mais 
 
 1. Repositório no GitHub (pode ficar privado).
 2. [vercel.com](https://vercel.com) → sign in com GitHub → **Add New Project**.
-3. Importar o repositório `Comparador` (o preset **Next.js** é detetado automaticamente).
+3. Importar o repositório `Comparador` (o preset **Next.js** é detetado automaticamente; o `packageManager` em `package.json` manda o Vercel usar Bun).
 4. Se o Vercel não detetar o bun: em *Settings → Build*, definir Install Command `bun install` e Build Command `bun run build`.
 5. **Deploy**.
-6. O URL fica em `https://<project>.vercel.app` (sem alterações de código necessárias).
+6. Deploy atual: **https://comparador-fawn.vercel.app**.
 
-Verificação após o deploy:
+Verificação do deploy atual:
 
 ```bash
-curl https://<project>.vercel.app/api/health
-curl "https://<project>.vercel.app/api/continente/search?q=arroz"
-curl "https://<project>.vercel.app/api/pingodoce/search?q=azeite"
+curl https://comparador-fawn.vercel.app/api/health
+curl "https://comparador-fawn.vercel.app/api/continente/search?q=arroz"
+curl "https://comparador-fawn.vercel.app/api/pingodoce/search?q=azeite"
 ```
 
 **Caveat conhecido**: os sites das lojas usam CDN/bot-protection; IPs de datacenter podem ser bloqueados (`403`) mesmo que funcionem a partir de casa. É o primeiro sinal a verificar no passo 6.
