@@ -382,8 +382,8 @@ export default function ComparePage() {
                   <Skeleton className="h-6 w-20 rounded bg-zinc-900" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {[...Array(8)].map((_, i) => (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {[...Array(12)].map((_, i) => (
                   <div key={i} className="flex flex-col gap-2.5 p-3 border border-zinc-800/80 rounded-xl bg-zinc-900/60">
                     <Skeleton className="w-full aspect-square rounded-lg bg-zinc-800/80" />
                     <Skeleton className="h-3.5 w-3/4 bg-zinc-800/80 rounded" />
@@ -433,7 +433,7 @@ export default function ComparePage() {
                   )}
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4 content-start">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3.5 sm:gap-4 content-start">
                   {filteredAndSortedProducts.map((product, idx) => (
                     <ProductCard key={`${product.id}-${idx}`} product={product} />
                   ))}

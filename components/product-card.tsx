@@ -51,18 +51,18 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
 
       {/* Product Title */}
-      <h3 className="text-xs font-medium text-zinc-200 group-hover:text-white transition-colors leading-relaxed line-clamp-2 min-h-[32px] mb-1">
+      <h3 className="text-[11px] font-medium text-zinc-200 group-hover:text-white transition-colors leading-relaxed line-clamp-2 min-h-[32px] mb-1">
         {product.nome}
       </h3>
       
       {/* Pricing & Details */}
       <div className="mt-auto pt-2">
         <div className="flex items-baseline gap-1.5 flex-wrap">
-          <span className="text-base font-bold text-white tracking-tight">
+          <span className="text-sm font-bold text-white tracking-tight">
             {product.price.toLocaleString("pt-PT", { style: "currency", currency: "EUR" })}
           </span>
           {product.pvp_recomendado && product.pvp_recomendado > product.price && (
-            <span className="text-[11px] text-zinc-500 line-through">
+            <span className="text-[10px] text-zinc-500 line-through">
               {product.pvp_recomendado.toLocaleString("pt-PT", { style: "currency", currency: "EUR" })}
             </span>
           )}
