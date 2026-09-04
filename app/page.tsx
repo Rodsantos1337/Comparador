@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { Search, AlertCircle, ShoppingBag, Sparkles, Filter, ChevronDown } from "lucide-react";
+import { Search, X, AlertCircle, ShoppingBag, Sparkles, Filter, ChevronDown } from "lucide-react";
 import { useDebounce } from "use-debounce";
 
 import { Product } from "@/lib/types";
@@ -137,6 +137,22 @@ export default function ComparePage() {
     }
   };
 
+  const handleClear = () => {
+    setInputValue("");
+    setQuery("");
+    setProducts([]);
+    setSuggestions([]);
+    setShowSuggestions(false);
+    setHasSearched(false);
+    setError(null);
+    setLoading(false);
+    setFilterPromo(false);
+    setFilterIva(false);
+    setSortParam("price_asc");
+    setShowContinente(true);
+    setShowPingoDoce(true);
+  };
+
   const getDiscountPercent = (descontoStr: string | null) => {
     if (!descontoStr) return 0;
     const match = descontoStr.match(/\d+/);
@@ -206,10 +222,25 @@ export default function ComparePage() {
               }}
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              onKeyDown={(e) => {
+                if (e.key === "Escape" && inputValue) handleClear();
+              }}
               className="w-full h-9 pl-9 pr-8 bg-zinc-950/80 border border-zinc-800 rounded-lg text-sm text-zinc-100 placeholder:text-zinc-500 focus:bg-zinc-950 focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600/50 transition-all outline-none"
               placeholder="Pesquisar produtos (ex: Arroz, Leite, Azeite)..."
             />
-            <Search className="absolute left-3 top-2.5 w-4 h-4 text-zinc-400" />
+            <Search className="absolute left-3 top-2.5 w-4 h-4 text-zinc-400 pointer-events-none" />
+            {inputValue.length > 0 && (
+              <button
+                type="button"
+                aria-label="Limpar pesquisa"
+                title="Limpar pesquisa"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={handleClear}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-zinc-500 hover:text-white hover:bg-zinc-800/80 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
             
             {/* Auto-complete Suggestions Dropdown */}
             {showSuggestions && suggestions.length > 0 && (
