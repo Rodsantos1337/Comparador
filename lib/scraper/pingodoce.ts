@@ -1,6 +1,7 @@
 import { load } from "cheerio";
 import { parsePrice, parsePercent } from "@/lib/format";
 import { httpGetText } from "./http";
+import { categoryFromProductUrl } from "./category";
 import type { Product, StoreBrand } from "@/lib/types";
 
 const BASE_URL = "https://www.pingodoce.pt";
@@ -145,7 +146,7 @@ export function parsePingoDoceProducts(html: string): Product[] {
       pvp_recomendado,
       promocao,
       preco_por_volume,
-      category: baseData.category ?? "",
+      category: categoryFromProductUrl(link_produto) || baseData.category || "",
       embalagem: preco_por_volume,
       link_produto,
       link_imagem,

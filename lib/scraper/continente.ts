@@ -1,6 +1,7 @@
 import { load } from "cheerio";
 import { parsePrice } from "@/lib/format";
 import { BROWSER_HEADERS, httpGetText } from "./http";
+import { leafCategory } from "./category";
 import type { Product, StoreBrand } from "@/lib/types";
 
 const BASE_URL = "https://www.continente.pt";
@@ -111,7 +112,7 @@ export function parseContinenteProducts(html: string): Product[] {
       pvp_recomendado: parsePrice(pvpTexto),
       promocao,
       preco_por_volume: precoPorUnidade,
-      category: baseData.category ?? "",
+      category: leafCategory(baseData.category),
       embalagem: embalagem || null,
       link_produto: absolutize(link_produto),
       link_imagem,
