@@ -3,16 +3,18 @@ import { NextRequest, NextResponse } from "next/server";
 /**
  * CORS for the public API routes.
  *
- * The grocery app calls these endpoints straight from the browser, so the
- * response must echo its origin. Only origins listed in SHOP_ALLOWED_ORIGINS are
- * accepted — a browser on any other site gets no CORS header and is blocked by
- * the browser (curl is unaffected, these endpoints stay public read-only).
+ * The API is public and read-only (scraped prices, no user data, no auth), so
+ * every origin is allowed to read it by default — that lets a separate frontend
+ * consume it straight from the browser. Deployments that want to restrict this
+ * set SHOP_ALLOWED_ORIGINS to a comma separated list of origins; browsers on any
+ * other site then get no CORS header and are blocked by the browser (curl is
+ * unaffected).
  */
-const DEFAULT_ORIGINS = ["http://localhost:3000", "http://localhost:3001"];
 
-function allowedOrigins(): string[] {
+function allowedOrigins(): string[] | null {
   const raw = process.env.SHOP_ALLOWED_ORIGINS;
-  if (!raw) return DEFAULT_ORIGINS;
+  if (!raw || !raw.trim()) return null; // null = allow any origin
+
   return raw
     .split(",")
     .map((origin) => origin.trim())
@@ -20,12 +22,20 @@ function allowedOrigins(): string[] {
 }
 
 function withCors(response: NextResponse, origin: string | null): NextResponse {
-  // The allowed set can differ per environment, so caches must key on Origin.
-  response.headers.set("Vary", "Origin");
+  if (!origin) return response; // not a browser cross-origin request
 
-  if (!origin || !allowedOrigins().includes(origin)) return response;
+  const allowed = allowedOrigins();
 
-  response.headers.set("Access-Control-Allow-Origin", origin);
+  if (allowed) {
+    // The allowed set can differ per environment, so caches must key on Origin.
+    response.headers.set("Vary", "Origin");
+    if (!allowed.includes(origin)) return response;
+
+    response.headers.set("Access-Control-Allow-Origin", origin);
+  } else {
+    response.headers.set("Access-Control-Allow-Origin", "*");
+  }
+
   response.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
   response.headers.set("Access-Control-Allow-Headers", "Content-Type");
   response.headers.set("Access-Control-Max-Age", "86400");
